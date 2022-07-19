@@ -40,6 +40,10 @@ steps:
   inputs:
     BuildDropPath: '$(System.ArtifactsDirectory)'
 
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Pipeline.Workspace)'
+    publishLocation: 'pipeline'
 - task: Docker@2
   inputs:
     command: 'build'
