@@ -36,6 +36,13 @@ steps:
     pytest
   displayName: 'pytest'
 
-- task: ManifestGeneratorTask@0
+##- task: ManifestGeneratorTask@0
+##  inputs:
+##    BuildDropPath: '$(System.ArtifactsDirectory)/buildOutput'
+
+- task: Docker@2
   inputs:
-    BuildDropPath: '$(System.ArtifactsDirectory)/buildOutput'
+    command: 'build'
+    Dockerfile: '**/Dockerfile'
+    repository: pipelines-docker
+  displayName: Build an image
