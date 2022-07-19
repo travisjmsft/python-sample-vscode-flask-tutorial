@@ -36,9 +36,9 @@ steps:
     pytest
   displayName: 'pytest'
 
-##- task: ManifestGeneratorTask@0
-##  inputs:
-##    BuildDropPath: '$(System.ArtifactsDirectory)'
+- task: ManifestGeneratorTask@0
+  inputs:
+    BuildDropPath: '$(System.ArtifactsDirectory)'
 
 - task: Docker@2
   inputs:
