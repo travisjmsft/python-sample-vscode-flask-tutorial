@@ -52,6 +52,9 @@ steps:
   inputs:
     targetPath: '$(Pipeline.Workspace)'
     publishLocation: 'pipeline'
+    artifact: travisj-artifact
+
+
 
 ##- task: Docker@2
 ##  inputs:
