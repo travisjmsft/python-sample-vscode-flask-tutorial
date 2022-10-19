@@ -9,12 +9,12 @@
       }
     }
   ],
-  "id": "did:web:github.com:travisjmsft",
+  "id": "did:web:github.com:travisjmsft:python-sample-vscode-flask-tutorial:blob:master",
   "verificationMethod": [
     {
-      "id": "did:web:github.com:travisjmsft#key1",
+      "id": "did:web:github.com:travisjmsft:python-sample-vscode-flask-tutorial:blob:master#key1",
       "type": "Ed25519VerificationKey2018",
-      "controller": "did:web:github.com:travisjmsft",
+      "controller": "did:web:github.com:travisjmsft:python-sample-vscode-flask-tutorial:blob:master",
       "publicKeyJwk": {
         "kty": "OKP",
         "crv": "Ed25519",
@@ -23,10 +23,10 @@
     }
   ],
   "authentication": [
-    "did:web:github.com:travisjmsft#key1"
+    "did:web:github.com:travisjmsft:python-sample-vscode-flask-tutorial:blob:master#key1"
   ],
   "assertionMethod": [
-    "did:web:github.com:travisjmsft#key1"
+    "did:web:github.com:travisjmsft:python-sample-vscode-flask-tutorial:blob:master#key1"
   ]
 }
 
