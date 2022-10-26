@@ -5,7 +5,7 @@ on:
     branches: master
     
 env:
-  REGISTRY: travisjregistry
+  REGISTRY: travisjregistry.azurecr.io
   IMAGE_NAME: myimage
 
 jobs:
