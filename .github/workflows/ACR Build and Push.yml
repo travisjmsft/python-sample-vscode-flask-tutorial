@@ -54,7 +54,7 @@ jobs:
           $RUNNER_TEMP/sbom-tool generate -BuildDropPath . -BuildComponentPath . -PackageName MyPackage -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.mycompany.com -V Verbose
 
       - 
-        name: Upload a Build Artifact
+        name: Upload the SBOM for notarization
         uses: actions/upload-artifact@v3.1.1
         with:
-          path: ./_manifest/**
+          path: ./_manifest/spdx_2.2/manifest.spdx.json
