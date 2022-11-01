@@ -54,7 +54,24 @@ jobs:
           $RUNNER_TEMP/sbom-tool generate -BuildDropPath . -BuildComponentPath . -PackageName MyPackage -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.mycompany.com -V Verbose
 
       - 
-        name: Upload the SBOM for notarization
+        name: Publish the SBOM for notarization later
         uses: actions/upload-artifact@v3.1.1
         with:
           path: ./_manifest/spdx_2.2/manifest.spdx.json
+
+
+# This step needs to be performed on a Windows machine. i.e., separate job
+#     - 
+#       name: Sign files with Azure Code Signing
+#       uses: azure/azure-code-signing
+#       with:
+#         azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }} 
+#         azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#         azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+#         endpoint: https://wus2.codesigning.azure.net/
+#         code-signing-account-name: scitt-test-codesigning
+#         certificate-profile-name: scitt-test-certificate-profile
+#         files-folder: .
+#         files-folder-filter: json
+#         file-digest: SHA256
+
