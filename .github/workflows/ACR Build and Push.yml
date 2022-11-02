@@ -63,7 +63,7 @@ jobs:
       - 
         name: Oras Attach SBOM
         run: |
-          oras attach ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} _manifest/spdx_2.2/manifest.spdx.json --artifact-type application/spdx+json
+          oras attach ${{ steps.meta.outputs.tags }} _manifest/spdx_2.2/manifest.spdx.json --artifact-type application/spdx+json
 
       
       - 
