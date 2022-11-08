@@ -24,10 +24,23 @@ jobs:
       -
         name: Install ORAS CLI
         run: | 
-          curl -LO https://github.com/oras-project/oras/releases/download/v0.15.0/oras_0.15.0_linux_amd64.tar.gz
-          tar -zxf oras_0.15.0_*.tar.gz oras
+          curl -Lo https://github.com/oras-project/oras/releases/download/v0.15.0/oras_0.15.0_linux_amd64.tar.gz
+          tar -xzf oras_0.15.0_*.tar.gz oras
           mv oras /usr/local/bin/
 
+      -
+        name: Install and configure Notation CLI
+          curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.11.0-alpha.4/notation_0.11.0-alpha.4_linux_amd64.tar.gz
+          tar -xzf notation.tar.gz
+          mv ./notation /usr/local/bin
+          
+      -
+        name: Install and configure Notation AKV Plugin
+          mkdir -p ~/.config/notation/plugins/azure-kv
+          curl -Lo notation-azure-kv.tar.gz https://github.com/Azure/notation-azure-kv/releases/download/v0.4.0-alpha.4/notation-azure-kv_0.4.0-alpha.4_Linux_amd64.tar.gz
+          tar -xzf notation-azure-kv.tar.gz -C ~/.config/notation/plugins/azure-kv notation-azure-kv
+          notation plugin ls
+          
       -
         name: Login to ACR
         uses: docker/login-action@v2
