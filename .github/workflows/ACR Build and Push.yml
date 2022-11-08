@@ -30,12 +30,14 @@ jobs:
 
       -
         name: Install and configure Notation CLI
+        run: |
           curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.11.0-alpha.4/notation_0.11.0-alpha.4_linux_amd64.tar.gz
           tar -xzf notation.tar.gz
           mv ./notation /usr/local/bin
           
       -
         name: Install and configure Notation AKV Plugin
+        run: |
           mkdir -p ~/.config/notation/plugins/azure-kv
           curl -Lo notation-azure-kv.tar.gz https://github.com/Azure/notation-azure-kv/releases/download/v0.4.0-alpha.4/notation-azure-kv_0.4.0-alpha.4_Linux_amd64.tar.gz
           tar -xzf notation-azure-kv.tar.gz -C ~/.config/notation/plugins/azure-kv notation-azure-kv
