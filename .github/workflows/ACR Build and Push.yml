@@ -49,8 +49,7 @@ jobs:
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           creds: ${{ secrets.AZURE_CLIENT_SECRET }}
-          # TenantId of the Azure Service principal created.
-          #tenant-id: # optional
+          tenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
           subscription-id: 35d7bfcd-e322-43a5-8362-5f38fdecb6b4
        
       -
