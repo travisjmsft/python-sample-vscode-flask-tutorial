@@ -24,9 +24,9 @@ jobs:
       -
         name: Install ORAS CLI
         run: | 
-          curl -Lo https://github.com/oras-project/oras/releases/download/v0.15.0/oras_0.15.0_linux_amd64.tar.gz
-          tar -xzf oras_0.15.0_*.tar.gz oras
-          mv oras /usr/local/bin/
+          curl -Lo oras.tar.gz https://github.com/oras-project/oras/releases/download/v0.15.0/oras_0.15.0_linux_amd64.tar.gz
+          tar -xzf oras.tar.gz 
+          mv ./oras /usr/local/bin/
 
       -
         name: Install and configure Notation CLI
