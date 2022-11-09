@@ -78,7 +78,7 @@ jobs:
         uses: Azure/cli@v1
         with:
           inlineScript: 
-            KEY_ID=$(az keyvault certificate show -n $KEY_NAME --vault-name $AKV_NAME --query 'kid' -o tsv)
+            KEY_ID=$(az keyvault certificate show -n travisj-testcert --vault-name travisj-kv --query 'kid' -o tsv)
             notation key add --name travisj-testcert --plugin azure-kv --id $KEY_ID
             notation key ls
           
