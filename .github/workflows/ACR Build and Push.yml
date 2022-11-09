@@ -81,7 +81,7 @@ jobs:
           inlineScript: 
             KEY_ID=$(az keyvault certificate show -n travisj-testcert --vault-name travisj-kv --query 'kid' -o tsv)
             echo $KEY_ID
-            echo "KEY_ID=$KEY_ID" >> $GITHUB_OUTPUT
+            echo "KEY_ID=$(KEY_ID)" >> $GITHUB_OUTPUT
           
       -
         name: Configure AKV plugin for notation
