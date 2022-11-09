@@ -75,18 +75,21 @@ jobs:
           
       -
         name: Get signing cert ID
-        id: akv-cert
-        uses: Azure/cli@v1   # $(az keyvault certificate show -n travisj-testcert --vault-name travisj-kv --query 'kid' -o tsv)
-        with:
-          inlineScript: 
-            KEY_ID=https://travisj-kv.vault.azure.net/keys/travisj-testcert/58ecd0c38c2542f9a35d5e47536b10c2
-            echo "KEY_ID=$KEY_ID" >> $GITHUB_OUTPUT
+        id: akvcert
+        run: |
+          KEY_ID=$(az keyvault certificate show -n travisj-testcert --vault-name travisj-kv --query 'kid' -o tsv)
+          echo "KEY_ID=$KEY_ID" >> $GITHUB_OUTPUT
+        #uses: Azure/cli@v1   # $(az keyvault certificate show -n travisj-testcert --vault-name travisj-kv --query 'kid' -o tsv)
+        #with:
+        #  inlineScript: 
+        #    KEY_ID=https://travisj-kv.vault.azure.net/keys/travisj-testcert/58ecd0c38c2542f9a35d5e47536b10c2
+        #    echo "KEY_ID=$KEY_ID" >> $GITHUB_OUTPUT
           
       -
         name: Configure AKV plugin for notation
         run: |
           echo ${{ steps.akv-cert.outputs.KEY_ID }}
-          notation key add --name travisj-testcert --plugin azure-kv --id ${{ steps.akv-cert.outputs.KEY_ID }}
+          notation key add --name travisj-testcert --plugin azure-kv --id ${{ steps.akvcert.outputs.KEY_ID }}
           notation key ls
       
       - 
