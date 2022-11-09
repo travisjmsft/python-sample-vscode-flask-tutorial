@@ -46,7 +46,8 @@ jobs:
       -
         name: Install Notation CLI
         run: |
-          curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.11.0-alpha.4/notation_0.11.0-alpha.4_linux_amd64.tar.gz
+          #curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.11.0-alpha.4/notation_0.11.0-alpha.4_linux_amd64.tar.gz
+          curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.12.0-beta.1.dev.20221106/notation_0.12.0-beta.1.dev.20221106_linux_amd64.tar.gz
           tar -xzf notation.tar.gz
           mv ./notation /usr/local/bin
           
