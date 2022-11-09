@@ -18,6 +18,20 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v3.1.0
+        
+      - 
+        name: Login to Azure
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_GITHUB_CREDS }}
+
+      -
+        name: Login to ACR
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.AZURE_CLIENT_ID }}
+          password: ${{ secrets.AZURE_CLIENT_SECRET }}
 
       - 
         name: Setup Docker buildx
@@ -45,29 +59,15 @@ jobs:
           tar -xzf notation-azure-kv.tar.gz -C ~/.config/notation/plugins/azure-kv notation-azure-kv
           notation plugin ls
        
-      - 
-        name: Login to Azure
-        uses: Azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_GITHUB_CREDS }}
-      
       -
-        name: Configure AKV plugin for notation
+        name: Configure Notation AKV plugin
         run: |
           KEY_ID=$(az keyvault certificate show -n ${{ env.CERT_NAME }} --vault-name ${{ env.VAULT_NAME }} --query 'kid' -o tsv)
           notation key add --name ${{ env.CERT_NAME }} --plugin azure-kv --id $KEY_ID
           notation key ls
           
-      -
-        name: Login to ACR
-        uses: docker/login-action@v2
-        with:
-          registry: travisjregistry.azurecr.io
-          username: ${{ secrets.AZURE_CLIENT_ID }}
-          password: ${{ secrets.AZURE_CLIENT_SECRET }}
-      
       - 
-        name: Generate Docker metadata
+        name: Generate metadata for Docker image
         id: meta
         uses: docker/metadata-action@v4.1.1
         with:
@@ -82,12 +82,13 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }} 
           tags: ${{ steps.meta.outputs.tags }}
           
+      
       - 
-        name: Generate SBOM
+        name: Generate SBOM for repo  # Not an SBOM for the resulting container
         run: |
-          curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
-          chmod +x $RUNNER_TEMP/sbom-tool
-          $RUNNER_TEMP/sbom-tool generate -BuildDropPath . -BuildComponentPath . -PackageName MyPackage -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.mycompany.com -V Verbose
+          curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
+          chmod +x ./sbom-tool
+          ./sbom-tool generate -BuildDropPath . -BuildComponentPath . -PackageName ${{ github.event.repository.name }} -PackageVersion ${{ github.event.release.tag_name }} -PackageSupplier ${{ env.github.GITHUB_REPOSITORY_OWNER -NamespaceUriBase https://sbom.travisjco.com -V Verbose
 
       - 
         name: Oras Attach SBOM
