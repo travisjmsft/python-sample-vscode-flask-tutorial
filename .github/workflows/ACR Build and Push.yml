@@ -89,8 +89,7 @@ jobs:
       -
         name: Sign Docker image
         run: |
-          #docker login travisjregistry.azurecr.io -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} 
-          #notation login -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} travisjregistry.azurecr.io
+          notation login -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} travisjregistry.azurecr.io
           #notation sign --envelope-type cose --key ${{ env.CERT_NAME }} ${{ steps.meta.outputs.tags }} 
           oras discover ${{ steps.meta.outputs.tags }} -o tree
       
