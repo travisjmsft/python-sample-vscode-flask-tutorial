@@ -85,7 +85,7 @@ jobs:
       -
         name: Sign Docker image
         run: |
-          notation sign --envelope-type cose --key ${{ env.CERT_NAME }} ${{ steps.meta.output.tags }} 
+          notation sign --envelope-type cose --key ${{ env.CERT_NAME }} ${{ steps.meta.outputs.tags }} 
           oras discover ${{ steps.meta.output.tags }} -o tree
       
       - 
