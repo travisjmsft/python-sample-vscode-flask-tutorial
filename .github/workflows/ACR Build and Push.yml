@@ -86,7 +86,7 @@ jobs:
         name: Sign Docker image
         run: |
           notation sign --envelope-type cose --key ${{ env.CERT_NAME }} ${{ steps.meta.outputs.tags }} 
-          oras discover ${{ steps.meta.output.tags }} -o tree
+          oras discover ${{ steps.meta.outputs.tags }} -o tree
       
       - 
         name: Generate SBOM for repo  # Not an SBOM for the resulting container
