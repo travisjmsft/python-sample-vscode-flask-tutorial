@@ -7,6 +7,8 @@ on:
 env:
   REGISTRY: travisjregistry.azurecr.io
   IMAGE_NAME: myimage
+  VAULT_NAME: travisj-kv
+  CERT_NAME: travisj-testcert
 
 jobs:
   build-and-push:
@@ -29,14 +31,14 @@ jobs:
           mv ./oras /usr/local/bin/
 
       -
-        name: Install and configure Notation CLI
+        name: Install Notation CLI
         run: |
           curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.11.0-alpha.4/notation_0.11.0-alpha.4_linux_amd64.tar.gz
           tar -xzf notation.tar.gz
           mv ./notation /usr/local/bin
           
       -
-        name: Install and configure Notation AKV Plugin
+        name: Install Notation AKV Plugin
         run: |
           mkdir -p ~/.config/notation/plugins/azure-kv
           curl -Lo notation-azure-kv.tar.gz https://github.com/Azure/notation-azure-kv/releases/download/v0.4.0-alpha.4/notation-azure-kv_0.4.0-alpha.4_Linux_amd64.tar.gz
@@ -48,7 +50,14 @@ jobs:
         uses: Azure/login@v1
         with:
           creds: ${{ secrets.AZURE_GITHUB_CREDS }}
-       
+      
+      -
+        name: Configure AKV plugin for notation
+        run: |
+          KEY_ID=$(az keyvault certificate show -n ${{ env.CERT_NAME }} --vault-name ${{ env.VAULT_NAME }} --query 'kid' -o tsv)
+          notation key add --name ${{ env.CERT_NAME }} --plugin azure-kv --id $KEY_ID
+          notation key ls
+          
       -
         name: Login to ACR
         uses: docker/login-action@v2
@@ -58,7 +67,7 @@ jobs:
           password: ${{ secrets.AZURE_CLIENT_SECRET }}
       
       - 
-        name: Extract Docker metadata
+        name: Generate Docker metadata
         id: meta
         uses: docker/metadata-action@v4.1.1
         with:
@@ -73,25 +82,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }} 
           tags: ${{ steps.meta.outputs.tags }}
           
-      #-
-      #  name: Get signing cert ID
-      #  id: akvcert
-      #  run: |
-      #    KEY_ID=$(az keyvault certificate show -n travisj-testcert --vault-name travisj-kv --query 'kid' -o tsv)
-      #    echo "KEY_ID=$KEY_ID" >> $GITHUB_OUTPUT
-        #uses: Azure/cli@v1   # $(az keyvault certificate show -n travisj-testcert --vault-name travisj-kv --query 'kid' -o tsv)
-        #with:
-        #  inlineScript: 
-        #    KEY_ID=https://travisj-kv.vault.azure.net/keys/travisj-testcert/58ecd0c38c2542f9a35d5e47536b10c2
-        #    echo "KEY_ID=$KEY_ID" >> $GITHUB_OUTPUT
-          
-      -
-        name: Configure AKV plugin for notation
-        run: |
-          KEY_ID=$(az keyvault certificate show -n travisj-testcert --vault-name travisj-kv --query 'kid' -o tsv)
-          notation key add --name travisj-testcert --plugin azure-kv --id $KEY_ID
-          notation key ls
-      
       - 
         name: Generate SBOM
         run: |
