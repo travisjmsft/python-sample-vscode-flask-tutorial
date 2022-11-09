@@ -27,14 +27,13 @@ jobs:
 
       -
         name: Login to ACR
-        run: |
-          az acr login -n travisjregistry -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }}
-          
-        ##uses: docker/login-action@v2
-        ##with:
-        ##  registry: ${{ env.REGISTRY }}
-        ##  username: ${{ secrets.AZURE_CLIENT_ID }}
-        ##  password: ${{ secrets.AZURE_CLIENT_SECRET }}
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.AZURE_CLIENT_ID }}
+          password: ${{ secrets.AZURE_CLIENT_SECRET }}
+        #run: |
+          #az acr login -n travisjregistry -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }}
 
       -
         name: Install ORAS CLI
@@ -46,8 +45,8 @@ jobs:
       -
         name: Install Notation CLI
         run: |
-          #curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.11.0-alpha.4/notation_0.11.0-alpha.4_linux_amd64.tar.gz
-          curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.12.0-beta.1.dev.20221106/notation_0.12.0-beta.1.dev.20221106_linux_amd64.tar.gz
+          curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.11.0-alpha.4/notation_0.11.0-alpha.4_linux_amd64.tar.gz
+          #curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.12.0-beta.1.dev.20221106/notation_0.12.0-beta.1.dev.20221106_linux_amd64.tar.gz
           tar -xzf notation.tar.gz
           mv ./notation /usr/local/bin
           
@@ -63,8 +62,8 @@ jobs:
         name: Configure Notation AKV plugin
         run: |
           KEY_ID=$(az keyvault certificate show -n ${{ env.CERT_NAME }} --vault-name ${{ env.VAULT_NAME }} --query 'kid' -o tsv)
-          #notation key add --name ${{ env.CERT_NAME }} --plugin azure-kv --id $KEY_ID
-          notation key add --plugin azure-kv --id $KEY_ID ${{ env.CERT_NAME }}  ## Latest version of notation has --name as positional now
+          notation key add --name ${{ env.CERT_NAME }} --plugin azure-kv --id $KEY_ID
+          #notation key add --plugin azure-kv --id $KEY_ID ${{ env.CERT_NAME }}  ## Latest version of notation has --name as positional now
           notation key ls
 
       - 
@@ -90,9 +89,9 @@ jobs:
       -
         name: Sign Docker image
         run: |
-          docker login travisjregistry.azurecr.io -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} 
-          notation login -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} travisjregistry.azurecr.io
-          notation sign --envelope-type cose --key ${{ env.CERT_NAME }} ${{ steps.meta.outputs.tags }} 
+          #docker login travisjregistry.azurecr.io -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} 
+          #notation login -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} travisjregistry.azurecr.io
+          #notation sign --envelope-type cose --key ${{ env.CERT_NAME }} ${{ steps.meta.outputs.tags }} 
           oras discover ${{ steps.meta.outputs.tags }} -o tree
       
       - 
