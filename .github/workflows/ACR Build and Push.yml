@@ -76,12 +76,11 @@ jobs:
       -
         name: Get signing cert ID
         id: akv-cert
-        uses: Azure/cli@v1
+        uses: Azure/cli@v1  # echo "KEY_ID=$KEY_ID" >> $GITHUB_OUTPUT
         with:
           inlineScript: 
             KEY_ID=$(az keyvault certificate show -n travisj-testcert --vault-name travisj-kv --query 'kid' -o tsv)
-            echo $KEY_ID
-            echo "KEY_ID=$(KEY_ID)" >> $GITHUB_OUTPUT
+            echo "::set-output name=KEY_ID::$KEY_ID"
           
       -
         name: Configure AKV plugin for notation
