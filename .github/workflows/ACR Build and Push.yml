@@ -96,8 +96,7 @@ jobs:
           curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
           chmod +x ./sbom-tool
           ./sbom-tool generate -BuildDropPath . -BuildComponentPath . -PackageName ${{ github.event.repository.name }} -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.travisjco.com -V Verbose
-          mv _manifest/spdx_2.2/manifest.spdx.json ./sbom.spdx.json
-          notation sign --envelope-type cose --local --output ./sbom-signature.cose --media-type "application/spdx+json" ./sbom.spdx.json
+          notation sign --envelope-type cose --local --output _manifest/spdx_2.2/sbom-signature.cose --media-type "application/spdx+json" _manifest/spdx_2.2/manifest.spdx.json
 
       - 
         name: ORAS Attach SBOM and Signature
@@ -109,8 +108,8 @@ jobs:
         uses: actions/upload-artifact@v3.1.1
         with:
           path: |
-            ./sbom.spdx.json
-            ./sbom-signature.cose
+            _manifest/spdx_2.2/manifest.spdx.json
+            _manifest/spdx_2.2/sbom-signature.cose
 
       
 
