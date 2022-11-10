@@ -32,8 +32,6 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.AZURE_CLIENT_ID_GH }}
           password: ${{ secrets.AZURE_CLIENT_SECRET_GH }}
-        #run: |
-          #az acr login -n travisjregistry -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }}
 
       -
         name: Install ORAS CLI
@@ -62,9 +60,9 @@ jobs:
         name: Configure Notation AKV plugin
         run: |
           KEY_ID=$(az keyvault certificate show -n ${{ env.CERT_NAME }} --vault-name ${{ env.VAULT_NAME }} --query 'kid' -o tsv)
-          #notation key add --name ${{ env.CERT_NAME }} --plugin azure-kv --id $KEY_ID
+          notation key add --name ${{ env.CERT_NAME }} --plugin azure-kv --id $KEY_ID
           #notation key add --plugin azure-kv --id $KEY_ID ${{ env.CERT_NAME }}  ## Latest version of notation has --name as positional now
-          #notation key ls
+          notation key ls
 
       - 
         name: Setup Docker buildx
@@ -86,22 +84,9 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }} 
           tags: ${{ steps.meta.outputs.tags }}
           
-      
-      
-      -
-        name: Setup Notation with azure-kv plugin
-        uses: Duffney/setup-notation@v0.1.0
-        with:
-          version: '0.11.0-alpha.4'
-          key_name: ${{ env.CERT_NAME }}
-          certificate_key_id: 'https://travisj-kv.vault.azure.net/keys/travisj-testcert/58ecd0c38c2542f9a35d5e47536b10c2'
-          plugin_name: 'notation-azure-kv'
-          plugin_version: '0.4.0-alpha.4'
-      
       -
         name: Sign Docker image
         run: |
-          #notation login -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} travisjregistry.azurecr.io
           notation sign --envelope-type cose -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} ${{ steps.meta.outputs.tags }} 
           oras discover ${{ steps.meta.outputs.tags }} -o tree
       
@@ -117,7 +102,6 @@ jobs:
         run: |
           oras attach ${{ steps.meta.outputs.tags }} _manifest/spdx_2.2/manifest.spdx.json --artifact-type application/spdx+json
 
-      
       - 
         name: Publish the SBOM for notarization later
         uses: actions/upload-artifact@v3.1.1
