@@ -30,8 +30,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.AZURE_CLIENT_ID }}
-          password: ${{ secrets.AZURE_CLIENT_SECRET }}
+          username: ${{ secrets.AZURE_CLIENT_ID_GH }}
+          password: ${{ secrets.AZURE_CLIENT_SECRET_GH }}
         #run: |
           #az acr login -n travisjregistry -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }}
 
