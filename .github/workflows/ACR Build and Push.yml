@@ -91,14 +91,15 @@ jobs:
           oras discover ${{ steps.meta.outputs.tags }} -o tree
       
       - 
-        name: Generate SBOM for repo  # Not an SBOM for the resulting container
+        name: Generate and sign SBOM for repo  # Not an SBOM for the resulting container
         run: |
           curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
           chmod +x ./sbom-tool
           ./sbom-tool generate -BuildDropPath . -BuildComponentPath . -PackageName ${{ github.event.repository.name }} -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.travisjco.com -V Verbose
+          notation sign --envelope-type cose --local --output ./sbom-signature.cose --media-type "application/spdx+json" _manifest/spdx_2.2/manifest.spdx.json
 
       - 
-        name: Oras Attach SBOM
+        name: ORAS Attach SBOM and Signature
         run: |
           oras attach ${{ steps.meta.outputs.tags }} _manifest/spdx_2.2/manifest.spdx.json --artifact-type application/spdx+json
 
