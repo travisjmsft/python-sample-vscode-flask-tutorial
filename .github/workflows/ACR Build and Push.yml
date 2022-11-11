@@ -63,7 +63,6 @@ jobs:
         run: |
           KEY_ID=$(az keyvault certificate show -n ${{ env.CERT_NAME }} --vault-name ${{ env.VAULT_NAME }} --query 'kid' -o tsv)
           notation key add --name ${{ env.CERT_NAME }} --plugin azure-kv --id $KEY_ID --default
-          #notation key add --plugin azure-kv --id $KEY_ID ${{ env.CERT_NAME }}  ## Latest version of notation has --name as positional now
           notation key ls
 
       - 
@@ -102,9 +101,10 @@ jobs:
       - 
         name: ORAS Attach SBOM and signature
         run: |
-          notation sign --envelope-type cose --local --output _manifest/spdx_2.2/sbom-signature.cose --media-type "application/spdx+json" _manifest/spdx_2.2/manifest.spdx.json
-          SBOM_DIGEST=$(oras attach ${{ steps.meta.outputs.tags }} _manifest/spdx_2.2/manifest.spdx.json --artifact-type application/spdx+json | sed 's/.*Digest: //')
-          echo "Hi: "$SBOM_DIGEST
+          oras attach ${{ steps.meta.outputs.tags }} _manifest/spdx_2.2/manifest.spdx.json --artifact-type application/spdx+json
+          SBOM_DIGEST=$(oras discover $REGISTRY_URL/mycontainer:v1 -o json --artifact-type application/spdx+json | jq -r ".referrers[0].digest")
+          notation sign --envelope-type cose ${{ steps.meta.outputs.tags }}@$SBOM_DIGEST 
+          # notation sign --envelope-type cose --local --output _manifest/spdx_2.2/sbom-signature.cose --media-type "application/spdx+json" _manifest/spdx_2.2/manifest.spdx.json
 
       - 
         name: Publish artifacts and signatures
