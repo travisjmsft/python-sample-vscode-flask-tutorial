@@ -102,7 +102,7 @@ jobs:
         name: ORAS Attach SBOM and signature
         run: |
           oras attach ${{ steps.meta.outputs.tags }} _manifest/spdx_2.2/manifest.spdx.json --artifact-type application/spdx+json
-          SBOM_DIGEST=$(oras discover $REGISTRY_URL/mycontainer:v1 -o json --artifact-type application/spdx+json | jq -r ".referrers[0].digest")
+          SBOM_DIGEST=$(oras discover ${{ steps.meta.outputs.tags }} -o json --artifact-type application/spdx+json | jq -r ".referrers[0].digest")
           notation sign --envelope-type cose ${{ steps.meta.outputs.tags }}@$SBOM_DIGEST 
           # notation sign --envelope-type cose --local --output _manifest/spdx_2.2/sbom-signature.cose --media-type "application/spdx+json" _manifest/spdx_2.2/manifest.spdx.json
 
