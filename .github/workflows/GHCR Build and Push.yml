@@ -6,7 +6,7 @@ on:
     
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: myimage
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -34,10 +34,6 @@ jobs:
           curl -Lo oras.tar.gz https://github.com/oras-project/oras/releases/download/v0.15.0/oras_0.15.0_linux_amd64.tar.gz
           tar -xzf oras.tar.gz 
           mv ./oras /usr/local/bin/
-
-      - 
-        name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v2.2.1
 
       - 
         name: Generate metadata for Docker image
