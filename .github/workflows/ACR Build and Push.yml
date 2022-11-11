@@ -118,7 +118,9 @@ jobs:
         name: Upload a release
         uses: softprops/action-gh-release@v1
         with:
+          name: TravisJ Release
           draft: true
+          prerelease: true
           files: |
             _manifest/spdx_2.2/manifest.spdx.json
             _manifest/spdx_2.2/sbom-signature.cose
