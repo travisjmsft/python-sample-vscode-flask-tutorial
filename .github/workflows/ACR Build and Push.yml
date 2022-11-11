@@ -3,6 +3,7 @@ name: ACR Build and Push
 on: 
   push:
     branches: master
+    tags: "v*"
     
 env:
   REGISTRY: travisjregistry.azurecr.io
