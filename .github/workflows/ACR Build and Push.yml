@@ -57,14 +57,12 @@ jobs:
           mkdir -p ~/.config/notation/plugins/azure-kv
           curl -Lo notation-azure-kv.tar.gz https://github.com/Azure/notation-azure-kv/releases/download/v0.4.0-alpha.4/notation-azure-kv_0.4.0-alpha.4_Linux_amd64.tar.gz
           tar -xzf notation-azure-kv.tar.gz -C ~/.config/notation/plugins/azure-kv notation-azure-kv
-          notation plugin ls
        
       -
         name: Configure Notation AKV plugin
         run: |
           KEY_ID=$(az keyvault certificate show -n ${{ env.CERT_NAME }} --vault-name ${{ env.VAULT_NAME }} --query 'kid' -o tsv)
           notation key add --name ${{ env.CERT_NAME }} --plugin azure-kv --id $KEY_ID --default
-          notation key ls
 
       - 
         name: Setup Docker buildx
