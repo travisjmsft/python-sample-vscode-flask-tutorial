@@ -13,6 +13,8 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
       -
@@ -111,7 +113,17 @@ jobs:
             _manifest/spdx_2.2/manifest.spdx.json
             _manifest/spdx_2.2/sbom-signature.cose
 
-      
+
+      -
+        name: Upload a release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: 
+            _manifest/spdx_2.2/manifest.spdx.json
+            _manifest/spdx_2.2/sbom-signature.cose
+            
+
 
 # This step needs to be performed on a Windows machine. 
 # i.e., separate job, prepare WinSDK, download the published artifact from prior step
