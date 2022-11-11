@@ -117,8 +117,8 @@ jobs:
       -
         name: Upload a release
         uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: TravisJ Release
           prerelease: true
           files: |
             _manifest/spdx_2.2/manifest.spdx.json
