@@ -3,7 +3,6 @@ name: ACR Build and Push
 on: 
   push:
     branches: master
-    tags: "v*"
     
 env:
   REGISTRY: travisjregistry.azurecr.io
@@ -118,8 +117,8 @@ jobs:
       -
         name: Upload a release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
+          draft: true
           prerelease: true
           files: |
             _manifest/spdx_2.2/manifest.spdx.json
