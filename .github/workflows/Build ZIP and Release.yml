@@ -25,7 +25,7 @@ jobs:
         run: |
           curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
           chmod +x ./sbom-tool
-          ./sbom-tool generate -BuildDropPath . -BuildComponentPath . BuildListFile include.txt -PackageName ${{ github.event.repository.name }} -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.travisjco.com -V Verbose
+          ./sbom-tool generate -BuildDropPath . -BuildComponentPath . -BuildListFile include.txt -PackageName ${{ github.event.repository.name }} -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.travisjco.com -V Verbose
           
       -
         name: Upload a release
