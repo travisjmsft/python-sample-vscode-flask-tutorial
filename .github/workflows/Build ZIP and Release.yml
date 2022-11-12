@@ -1,1 +1,23 @@
+name: Zip and Release
 
+on: 
+  push:
+    branches: master
+    
+jobs:
+  zip-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3.1.0
+        
+      - 
+        name: Zip
+        run: | 
+          tar -zcvf travisj-release.tar.gz -X exclude.txt .
+          
+      
