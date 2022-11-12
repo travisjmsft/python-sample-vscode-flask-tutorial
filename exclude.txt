@@ -5,3 +5,4 @@
 *.md
 *.yml
 did.json
+exclude.txt
