@@ -1,4 +1,4 @@
-hello_app
+hello_app/
 Dockerfile
 LICENSE
 requirements.txt
