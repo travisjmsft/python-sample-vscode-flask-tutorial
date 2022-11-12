@@ -1,9 +1,0 @@
-.git
-.github
-.vscode
-.well-known
-.gitignore
-*.md
-*.yml
-did.json
-exclude.txt
