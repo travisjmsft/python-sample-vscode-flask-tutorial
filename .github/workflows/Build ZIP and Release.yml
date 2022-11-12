@@ -20,14 +20,15 @@ jobs:
       - 
         name: Zip
         run: | 
-          tar -zcvf travisj-release.tar.gz -X src/exclude.txt src/
+          cd src/
+          tar -zcvf ../travisj-release.tar.gz -X exclude.txt .
           
       - 
         name: Generate SBOM 
         run: |
           curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
           chmod +x ./sbom-tool
-          ./sbom-tool generate -BuildDropPath . -BuildComponentPath . -PackageName ${{ github.event.repository.name }} -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.travisjco.com -V Verbose
+          ./sbom-tool generate -BuildDropPath . -BuildComponentPath travisj-release.tar.gz -PackageName ${{ github.event.repository.name }} -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.travisjco.com -V Verbose
           
       -
         name: Upload a release
