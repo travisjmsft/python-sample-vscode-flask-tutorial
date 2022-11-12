@@ -14,14 +14,11 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v3.1.0
-        with:
-          path: src
         
       - 
         name: Zip
         run: | 
-          cd src/
-          tar -zcvf ../travisj-release.tar.gz -T include.txt .
+          tar -zcvf travisj-release.tar.gz -T include.txt .
           
       - 
         name: Generate SBOM 
