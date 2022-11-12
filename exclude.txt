@@ -1,5 +1,5 @@
 .git
-.github/workflows
+.github
 .vscode
 .well-known
 .gitignore
