@@ -16,6 +16,33 @@ jobs:
         uses: actions/checkout@v3.1.0
         
       - 
+        name: Login to Azure
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_GITHUB_CREDS }}
+      
+      -
+        name: Install Notation CLI
+        run: |
+          curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.11.0-alpha.4/notation_0.11.0-alpha.4_linux_amd64.tar.gz
+          #curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.12.0-beta.1.dev.20221106/notation_0.12.0-beta.1.dev.20221106_linux_amd64.tar.gz
+          tar -xzf notation.tar.gz
+          mv ./notation /usr/local/bin
+          
+      -
+        name: Install Notation AKV Plugin
+        run: |
+          mkdir -p ~/.config/notation/plugins/azure-kv
+          curl -Lo notation-azure-kv.tar.gz https://github.com/Azure/notation-azure-kv/releases/download/v0.4.0-alpha.4/notation-azure-kv_0.4.0-alpha.4_Linux_amd64.tar.gz
+          tar -xzf notation-azure-kv.tar.gz -C ~/.config/notation/plugins/azure-kv notation-azure-kv
+       
+      -
+        name: Configure Notation AKV plugin
+        run: |
+          KEY_ID=$(az keyvault certificate show -n ${{ env.CERT_NAME }} --vault-name ${{ env.VAULT_NAME }} --query 'kid' -o tsv)
+          notation key add --name ${{ env.CERT_NAME }} --plugin azure-kv --id $KEY_ID --default
+        
+      - 
         name: Zip
         run: | 
           tar -zcvf travisj-release.tar.gz -T include.txt
@@ -27,6 +54,9 @@ jobs:
           chmod +x ./sbom-tool
           ./sbom-tool generate -BuildDropPath . -BuildComponentPath . -PackageName ${{ github.event.repository.name }} -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.travisjco.com -V Verbose
           
+     
+
+      
       -
         name: Upload a release
         uses: softprops/action-gh-release@v1
