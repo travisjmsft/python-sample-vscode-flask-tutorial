@@ -3,7 +3,11 @@ name: Zip and Release
 on: 
   push:
     branches: master
-    
+
+env:
+  VAULT_NAME: travisj-kv
+  CERT_NAME: travisj-testcert
+
 jobs:
   zip-and-release:
     runs-on: ubuntu-latest
