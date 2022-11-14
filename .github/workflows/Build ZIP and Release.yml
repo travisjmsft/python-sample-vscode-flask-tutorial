@@ -52,15 +52,13 @@ jobs:
           tar -zcvf travisj-release.tar.gz -T include.txt
           
       - 
-        name: Generate SBOM 
+        name: Generate and sign SBOM 
         run: |
           curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
           chmod +x ./sbom-tool
           ./sbom-tool generate -BuildDropPath . -BuildComponentPath . -PackageName ${{ github.event.repository.name }} -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.travisjco.com -V Verbose
-          
-     
+          notation sign --envelope-type cose --local --output _manifest/spdx_2.2/sbom-signature.cose --media-type "application/spdx+json" _manifest/spdx_2.2/manifest.spdx.json
 
-      
       -
         name: Upload a release
         uses: softprops/action-gh-release@v1
@@ -70,4 +68,5 @@ jobs:
           prerelease: true
           files: |
             _manifest/spdx_2.2/manifest.spdx.json
+            _manifest/spdx_2.2/sbom-signature.cose
             travisj-release.tar.gz
