@@ -112,18 +112,6 @@ jobs:
           path: |
             _manifest/spdx_2.2/manifest.spdx.json
             _manifest/spdx_2.2/sbom-signature.cose
-
-
-      -
-        name: Upload a release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: Latest dose of awesome
-          draft: true
-          prerelease: true
-          files: |
-            _manifest/spdx_2.2/manifest.spdx.json
-            _manifest/spdx_2.2/sbom-signature.cose
             
 
 
