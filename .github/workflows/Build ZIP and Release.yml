@@ -7,6 +7,11 @@ on:
 env:
   VAULT_NAME: travisj-kv
   CERT_NAME: travisj-testcert
+# Variables for Azure Code Signing config
+# ACS_KEY_ID: acs-signing-key
+# ACS_ENDPOINT: https://eus.codesigning.azure.net 
+# ACS_CODE_SIGNING_ACCOUNT: MySigningAccount
+# ACS_CERT_PROFILE: MyCertProfile
 
 jobs:
   zip-and-release:
@@ -29,36 +34,58 @@ jobs:
         name: Install Notation CLI
         run: |
           curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.11.0-alpha.4/notation_0.11.0-alpha.4_linux_amd64.tar.gz
-          #curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/download/v0.12.0-beta.1.dev.20221106/notation_0.12.0-beta.1.dev.20221106_linux_amd64.tar.gz
           tar -xzf notation.tar.gz
           mv ./notation /usr/local/bin
           
       -
-        name: Install Notation AKV Plugin
+        name: Install and configure notation AKV Plugin
         run: |
+          # Install 
           mkdir -p ~/.config/notation/plugins/azure-kv
           curl -Lo notation-azure-kv.tar.gz https://github.com/Azure/notation-azure-kv/releases/download/v0.4.0-alpha.4/notation-azure-kv_0.4.0-alpha.4_Linux_amd64.tar.gz
           tar -xzf notation-azure-kv.tar.gz -C ~/.config/notation/plugins/azure-kv notation-azure-kv
-       
-      -
-        name: Configure Notation AKV plugin
-        run: |
+          # Configure
           KEY_ID=$(az keyvault certificate show -n ${{ env.CERT_NAME }} --vault-name ${{ env.VAULT_NAME }} --query 'kid' -o tsv)
           notation key add --name ${{ env.CERT_NAME }} --plugin azure-kv --id $KEY_ID --default
-        
+       
       - 
         name: Zip
         run: | 
           tar -zcvf travisj-release.tar.gz -T include.txt
           
       - 
-        name: Generate and sign SBOM 
+        name: Generate SBOM 
         run: |
           curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
           chmod +x ./sbom-tool
           ./sbom-tool generate -BuildDropPath . -BuildComponentPath . -PackageName ${{ github.event.repository.name }} -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.travisjco.com -V Verbose
           notation sign --envelope-type cose --local --output _manifest/spdx_2.2/sbom-signature.cose --media-type "application/spdx+json" _manifest/spdx_2.2/manifest.spdx.json
 
+#      -
+#        name: Install SCITT CLI
+#        run: |
+#          curl -Lo scitt.tar.gz https://github.com/scitt/releases/download/v0.1.0-alpha.1/scitt_0.1.0-alpha.1_linux_amd64.tar.gz
+#          tar -xzf scitt.tar.gz
+#          mv ./scitt /usr/local/bin
+#        
+#      -
+#        name: Install and configure Notation ACS plugin
+#        run: |
+#          # Install 
+#          mkdir -p ~/.config/notation/plugins/azure-codesign
+#          curl -Lo notation-azure-codesign.tar.gz https://github.com/Azure/notation-azure-codesign/releases/download/v0.1.0-alpha.1/notation-azure-codesign_0.1.0-alpha.1_Linux_amd64.tar.gz
+#          tar -xzf notation-azure-codesign.tar.gz -C ~/.config/notation/plugins/azure-codesign notation-azure-codesign
+#          # Configure 
+#          notation key add --plugin azure-codesign --name ${{ env.ACS_KEY_ID }} --pluginConfig Endpoint=${{ env.ACS_ENDPOINT }}, CodeSigningAccountName=${{ env.ACS_CODE_SIGNING_ACCOUNT }}, CertificateProfileName=${{ env.ACS_CERT_PROFILE }}
+
+#      -
+#        name: Notarize SBOM with SCITT
+#        run: |
+#          cd _manifest/spdx_2.2/
+#          scitt prepare --output sbom-digest.json manifest.spdx.json
+#          notation sign --envelope-type cose --output sbom-signature.cose --media-type "application/spdx+json" manifest.spdx.json
+#          scitt submit --ledger scitt-privatepreview --artifact sbom-digest.json --signature sbom-signature.cose --receiptLocation sbom-receipt.cose
+      
       -
         name: Upload a release
         uses: softprops/action-gh-release@v1
@@ -69,4 +96,5 @@ jobs:
           files: |
             _manifest/spdx_2.2/manifest.spdx.json
             _manifest/spdx_2.2/sbom-signature.cose
+ #          _manifest/spdx_2.2/sbom-receipt.cose
             travisj-release.tar.gz
