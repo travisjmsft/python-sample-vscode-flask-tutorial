@@ -82,7 +82,7 @@ jobs:
 #        name: Notarize SBOM with SCITT
 #        run: |
 #          cd _manifest/spdx_2.2/
-#          scitt prepare --output sbom-digest.json manifest.spdx.json
+#          scitt prepare –mediaType application/spdx+json --output sbom-digest.json manifest.spdx.json
 #          notation sign --envelope-type cose --output sbom-signature.cose --media-type "application/spdx+json" manifest.spdx.json
 #          scitt submit --ledger scitt-privatepreview --artifact sbom-digest.json --signature sbom-signature.cose --receiptLocation sbom-receipt.cose
       
