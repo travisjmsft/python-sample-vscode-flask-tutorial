@@ -101,7 +101,7 @@ jobs:
         run: |
           oras attach ${{ steps.meta.outputs.tags }} _manifest/spdx_2.2/manifest.spdx.json --artifact-type application/spdx+json
           SBOM_DIGEST=$(oras discover ${{ steps.meta.outputs.tags }} -o json --artifact-type application/spdx+json | jq -r ".referrers[0].digest")
-          notation sign --signature-format cose -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} ${{ steps.meta.outputs.tags }}@$SBOM_DIGEST 
+          notation sign --signature-format cose -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@$SBOM_DIGEST 
 
       - 
         name: Publish artifacts and signatures
