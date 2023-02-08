@@ -9,6 +9,7 @@ env:
   IMAGE_NAME: myimage
   VAULT_NAME: travisj-kv
   CERT_NAME: Sectigo
+  GODEBUG: x509sha1=1
 
 jobs:
   build-and-push:
