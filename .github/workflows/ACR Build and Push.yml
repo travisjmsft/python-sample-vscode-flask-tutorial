@@ -101,8 +101,7 @@ jobs:
         run: |
           oras attach ${{ steps.meta.outputs.tags }} _manifest/spdx_2.2/manifest.spdx.json --artifact-type application/spdx+json
           SBOM_DIGEST=$(oras discover ${{ steps.meta.outputs.tags }} -o json --artifact-type application/spdx+json | jq -r ".referrers[0].digest")
-          notation sign --envelope-type cose -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} ${{ steps.meta.outputs.tags }}@$SBOM_DIGEST 
-          notation sign --envelope-type cose --local --output _manifest/spdx_2.2/sbom-signature.cose --media-type "application/spdx+json" _manifest/spdx_2.2/manifest.spdx.json
+          notation sign --signature-format cose -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} ${{ steps.meta.outputs.tags }}@$SBOM_DIGEST 
 
       - 
         name: Publish artifacts and signatures
@@ -110,7 +109,7 @@ jobs:
         with:
           path: |
             _manifest/spdx_2.2/manifest.spdx.json
-            _manifest/spdx_2.2/sbom-signature.cose
+#            _manifest/spdx_2.2/sbom-signature.cose
             
 
 
