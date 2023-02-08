@@ -61,7 +61,7 @@ jobs:
         name: Configure Notation AKV plugin
         run: |
           KEY_ID=$(az keyvault certificate show -n ${{ env.CERT_NAME }} --vault-name ${{ env.VAULT_NAME }} --query 'kid' -o tsv)
-          notation key add --name ${{ env.CERT_NAME }} --plugin azure-kv --id $KEY_ID --default
+          notation key add --plugin azure-kv --id $KEY_ID --default ${{ env.CERT_NAME }}
 
       - 
         name: Setup Docker buildx
