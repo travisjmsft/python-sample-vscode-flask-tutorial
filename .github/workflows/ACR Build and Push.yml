@@ -97,8 +97,9 @@ jobs:
         name: Submit signature to SCITT
         run: | 
           oras pull travisjregistry.azurecr.io/scitt:preview
-          chmod u+x ./scitt
-          ./scitt 
+          chmod +x ./scitt
+          ./scitt submit --signature signature.cose ---service-name test --output receipt.scitt --format json
+          
       
       - 
         name: Generate SBOM 
