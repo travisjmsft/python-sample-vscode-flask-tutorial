@@ -98,7 +98,7 @@ jobs:
         run: | 
           oras pull travisjregistry.azurecr.io/scitt:preview
           chmod +x ./scitt
-          ./scitt submit --signature signature.cose ---service-name test --output receipt.scitt --format json
+          ./scitt submit --signature signature.cose --service-name test --output receipt.scitt --format json
           
       
       - 
@@ -121,6 +121,8 @@ jobs:
         with:
           path: |
             _manifest/spdx_2.2/manifest.spdx.json
+            signature.cose
+            receipt.scitt
 #            _manifest/spdx_2.2/sbom-signature.cose
             
 
