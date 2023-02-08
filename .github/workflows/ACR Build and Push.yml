@@ -99,7 +99,7 @@ jobs:
           oras pull travisjregistry.azurecr.io/scitt:preview
           chmod +x ./scitt
           ./scitt submit --signature signature.cose --service-name test --output receipt.scitt --format json
-          
+          oras attach ${{ steps.meta.outputs.tags }} receipt.scitt --artifact-type application/json
       
       - 
         name: Generate SBOM 
