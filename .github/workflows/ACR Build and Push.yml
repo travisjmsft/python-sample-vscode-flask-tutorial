@@ -90,15 +90,15 @@ jobs:
           notation sign --signature-format cose -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} ${{ steps.meta.outputs.tags }} 
           oras discover ${{ steps.meta.outputs.tags }} -o tree
           SIG_DIGEST=$(oras discover ${{ steps.meta.outputs.tags }} --artifact-type application/vnd.cncf.notary.signature -o json | jq -r ".manifests[0].digest")
-          echo $SIG_DIGEST
           BLOB_DIGEST=$(oras manifest fetch ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@$SIG_DIGEST | jq -r ".blobs[0].digest")
-          echo $BLOB_DIGEST
           oras blob fetch --output signature.cose ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@$BLOB_DIGEST
       
       -
         name: Submit signature to SCITT
         run: | 
-#          ./scitt submit -s signature.cose -n test -o receipt.cbor
+          oras pull travisjregistry.azurecr.io/scitt:preview
+          chmod u+x ./scitt
+          ./scitt 
       
       - 
         name: Generate SBOM 
