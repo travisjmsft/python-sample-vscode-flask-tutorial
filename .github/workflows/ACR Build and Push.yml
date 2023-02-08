@@ -8,7 +8,7 @@ env:
   REGISTRY: travisjregistry.azurecr.io
   IMAGE_NAME: myimage
   VAULT_NAME: travisj-kv
-  CERT_NAME: travisj-testcert
+  CERT_NAME: Sectigo
 
 jobs:
   build-and-push:
