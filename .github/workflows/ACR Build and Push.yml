@@ -102,18 +102,12 @@ jobs:
           oras attach ${{ steps.meta.outputs.tags }} receipt.scitt --artifact-type application/json
       
       - 
-        name: Generate SBOM 
+        name: Generate and attach SBOM 
         run: |
           curl -Lo sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
           chmod +x ./sbom-tool
           ./sbom-tool generate -BuildDropPath . -BuildComponentPath . -PackageName ${{ github.event.repository.name }} -PackageVersion 1.0.0 -PackageSupplier TravisJCo -NamespaceUriBase https://sbom.travisjco.com -V Verbose
-
-      - 
-        name: ORAS Attach SBOM and signature
-        run: |
           oras attach ${{ steps.meta.outputs.tags }} _manifest/spdx_2.2/manifest.spdx.json --artifact-type application/spdx+json
-#          SBOM_DIGEST=$(oras discover ${{ steps.meta.outputs.tags }} -o json --artifact-type application/spdx+json | jq -r ".referrers[0].digest")
-#          notation sign --signature-format cose -u ${{ secrets.AZURE_CLIENT_ID_GH }} -p ${{ secrets.AZURE_CLIENT_SECRET_GH }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@$SBOM_DIGEST 
 
       - 
         name: Publish artifacts and signatures
@@ -123,28 +117,4 @@ jobs:
             _manifest/spdx_2.2/manifest.spdx.json
             signature.cose
             receipt.scitt
-#            _manifest/spdx_2.2/sbom-signature.cose
-            
-
-
-# This step needs to be performed on a Windows machine. 
-# i.e., separate job, prepare WinSDK, download the published artifact from prior step
-#
-#         mkdir -p ~/.config/notation/plugins/azure-kv
-#         curl -Lo notation-azure-kv.tar.gz https://github.com/Azure/notation-azure-kv/releases/download/v0.4.0-alpha.4/notation-azure-kv_0.4.0-alpha.4_Linux_amd64.tar.gz
-#         tar -xzf notation-azure-kv.tar.gz -C ~/.config/notation/plugins/azure-kv notation-azure-kv
-#
-#     - 
-#       name: Sign files with Azure Code Signing
-#       uses: azure/azure-code-signing
-#       with:
-#         azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }} 
-#         azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-#         azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-#         endpoint: https://wus2.codesigning.azure.net/
-#         code-signing-account-name: scitt-test-codesigning
-#         certificate-profile-name: scitt-test-certificate-profile
-#         files-folder: .
-#         files-folder-filter: json
-#         file-digest: SHA256
-
+           
